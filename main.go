@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"sort"
+	"time"
 )
 
 type Pair struct {
@@ -16,21 +18,25 @@ func (p PairList) Len() int           { return len(p) }
 func (p PairList) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 func (p PairList) Less(i, j int) bool { return p[i].Value > p[j].Value }
 
+var orderedStatisticsMap = make(map[string]PairList)
+var cumulativeArrayMap = make(map[string][]float64)
+
 func main() {
 
 	// chars := "0123456789abcdefghijklmnopqrstuvwxyzBCDEGHIJLOPQSTVWYZ"
 	trainingSongs := []string{"fDfDfadsptupauOasufDfDfadsptupausapasdfogfdifdsudsaufuffxDfDfDfDfDfDfadsptupauOasufDfDfadsptupausap", "9eyieyieyieyi8eyieyieyieyiEyiEyiEYoEYo6eToeyi6eyuwTu9qeyeyieyipeyppuoeuoeuopuop9pyieyiPyoEyo8ptieti8otusuo4itietietietiWtiWtiWtiOtiOOtIOtIOtIOtIOTiWTiWyioyi", "fsappaspasfgfddapOOpaOpadgDflkjhgdkjhhfsdffdfgdsfdssfh", "tuosfosftuosfosftypdgpdgtypdgpdgryodgodgryodgodgtuosfosftuosfosftupfjpfjtupfjpfjtyIpdIpdtyIpdIpdryodhodhryodhodhrtuosuosrtuosuosetuosuosetuosuos9eyIsyIs9eyIsyIswryoayoawryoayoawEuoSuoSwEuoSuoSqeypdypdqeypdypdqwyiaqwyia0wtostos0wtostos0qetieti0qetieti9qetieti9qetieti59wriwri59wriwri80wtuwtu80wtuwtu8wetuetu8wetuetu4qetuetu4qetuetu48etyety48etyety5qrtyrty5qrtyrty5qwrywry5qwrywry50wtuwtu50wtuwtu59wtiwti59wtiwti59wriwri59wriwri59etieti59etieti50wtowto50wto59wtiwti59wtiwti59wriwri59wri18weuweu18weuweu18qetiteteqe9q917oadgdadaoayiuy18uos", "fulfululkjhjkhfukfukfkffulfululkjhjkhfukfukfkfstjstjtjhgfghfdyjdyjdjdfulfululkjhjkhfukfukfkffulfululkjhjkhfukfukfkf"}
 
-	var orderedStatisticsMap, cumulativeArrayMap = constructStats(trainingSongs)
-	fmt.Println(orderedStatisticsMap)
-	fmt.Println(cumulativeArrayMap)
+	constructStats(trainingSongs)
 
+	var length = 110
+	var currentChar = "a"
+
+	var song = compose(currentChar, length)
+	fmt.Println(song)
 }
 
-func constructStats(trainingSongs []string) (map[string]PairList, map[string][]float64) {
+func constructStats(trainingSongs []string) {
 	statisticsMap := make(map[string]map[string]int)
-	orderedStatisticsMap := make(map[string]PairList)
-	cumulativeArrayMap := make(map[string][]float64)
 
 	for i := 0; i < len(trainingSongs); i++ {
 		for j := 0; j < len(trainingSongs[i]); j++ {
@@ -57,12 +63,8 @@ func constructStats(trainingSongs []string) (map[string]PairList, map[string][]f
 
 	}
 
-	// fmt.Println(statisticsMap)
-
 	for key, currentMap := range statisticsMap {
 
-		// var currentMap = statisticsMap[string(j)]
-		// fmt.Println(currentMap)
 		var currentSum = 0
 		p := make(PairList, len(currentMap))
 		a := make([]float64, len(p))
@@ -88,7 +90,27 @@ func constructStats(trainingSongs []string) (map[string]PairList, map[string][]f
 		cumulativeArrayMap[key] = a
 
 	}
+}
 
-	return orderedStatisticsMap, cumulativeArrayMap
+func compose(currentChar string, length int) string {
+	var currentMap = cumulativeArrayMap[currentChar]
+	var song = currentChar
+	rand.Seed(time.Now().UnixNano())
 
+	for i := 0; i < length; i++ {
+		var randomNr = 100.0 * rand.Float64()
+
+		j := 0
+		for j < len(currentMap) {
+			if randomNr <= currentMap[j] {
+				var newCurrent = orderedStatisticsMap[currentChar][j].Key
+				currentChar = newCurrent
+				song += newCurrent
+				currentMap = cumulativeArrayMap[currentChar]
+				break
+			}
+			j++
+		}
+	}
+	return song
 }
