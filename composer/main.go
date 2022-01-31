@@ -24,16 +24,33 @@ func (p PairList) Less(i, j int) bool { return p[i].Value > p[j].Value }
 func main() {
 	path := "../data.csv"
 	trainingSongs := loadData(path)
+	results := make(chan string)
 
-	// chars := "0123456789abcdefghijklmnopqrstuvwxyzBCDEGHIJLOPQSTVWYZ"
-	// trainingSongs := []string{"fDfDfadsptupauOasufDfDfadsptupausapasdfogfdifdsudsaufuffxDfDfDfDfDfDfadsptupauOasufDfDfadsptupausap", "9eyieyieyieyi8eyieyieyieyiEyiEyiEYoEYo6eToeyi6eyuwTu9qeyeyieyipeyppuoeuoeuopuop9pyieyiPyoEyo8ptieti8otusuo4itietietietiWtiWtiWtiOtiOOtIOtIOtIOtIOTiWTiWyioyi", "fsappaspasfgfddapOOpaOpadgDflkjhgdkjhhfsdffdfgdsfdssfh", "tuosfosftuosfosftypdgpdgtypdgpdgryodgodgryodgodgtuosfosftuosfosftupfjpfjtupfjpfjtyIpdIpdtyIpdIpdryodhodhryodhodhrtuosuosrtuosuosetuosuosetuosuos9eyIsyIs9eyIsyIswryoayoawryoayoawEuoSuoSwEuoSuoSqeypdypdqeypdypdqwyiaqwyia0wtostos0wtostos0qetieti0qetieti9qetieti9qetieti59wriwri59wriwri80wtuwtu80wtuwtu8wetuetu8wetuetu4qetuetu4qetuetu48etyety48etyety5qrtyrty5qrtyrty5qwrywry5qwrywry50wtuwtu50wtuwtu59wtiwti59wtiwti59wriwri59wriwri59etieti59etieti50wtowto50wto59wtiwti59wtiwti59wriwri59wri18weuweu18weuweu18qetiteteqe9q917oadgdadaoayiuy18uos", "fulfululkjhjkhfukfukfkffulfululkjhjkhfukfukfkfstjstjtjhgfghfdyjdyjdjdfulfululkjhjkhfukfukfkffulfululkjhjkhfukfukfkf"}
 	orderedStatisticsMap, cumulativeArrayMap := constructStats(trainingSongs)
 
-	length := 110
-	currentChar := "a"
+	// songCount := 5
 
-	song := compose(currentChar, length, orderedStatisticsMap, cumulativeArrayMap)
-	fmt.Println(song)
+	length1 := 10
+	currentChar1 := "a"
+
+	length2 := 100
+	currentChar2 := "a"
+
+	length3 := 1000
+	currentChar3 := "a"
+
+	go composeRoutines(currentChar1, length1, orderedStatisticsMap, cumulativeArrayMap, results)
+	go composeRoutines(currentChar2, length2, orderedStatisticsMap, cumulativeArrayMap, results)
+	go composeRoutines(currentChar3, length3, orderedStatisticsMap, cumulativeArrayMap, results)
+
+	var songs []string
+	for i := 0; i < 3; i++ {
+		songs = append(songs, <-results)
+	}
+
+	for _, song := range songs {
+		fmt.Println(song)
+	}
 }
 
 func loadData(path string) []string {
@@ -113,6 +130,11 @@ func constructStats(trainingSongs []string) (map[string]PairList, map[string][]f
 
 	}
 	return orderedStatisticsMap, cumulativeArrayMap
+}
+
+func composeRoutines(currentChar string, length int, orderedStatisticsMap map[string]PairList, cumulativeArrayMap map[string][]float64, results chan string) {
+	song := compose(currentChar, length, orderedStatisticsMap, cumulativeArrayMap)
+	results <- song
 }
 
 func compose(currentChar string, length int, orderedStatisticsMap map[string]PairList, cumulativeArrayMap map[string][]float64) string {
