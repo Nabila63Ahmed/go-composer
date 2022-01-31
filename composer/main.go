@@ -63,7 +63,7 @@ func constructStats(trainingSongs []string) (map[string]PairList, map[string][]f
 	for i := 0; i < len(trainingSongs); i++ {
 		for j := 0; j < len(trainingSongs[i]); j++ {
 			var currentChar = string(trainingSongs[i][j])
-			for k := 1; k < len(trainingSongs[i])-1; k++ {
+			for k := 1; k < len(trainingSongs[i]); k++ {
 				var nextChar = string(trainingSongs[i][k])
 				_, check_map_exsists := statisticsMap[currentChar]
 
