@@ -63,7 +63,7 @@ func constructStats(trainingSongs []string) (map[string]PairList, map[string][]f
 	for i := 0; i < len(trainingSongs); i++ {
 		for j := 0; j < len(trainingSongs[i]); j++ {
 			var currentChar = string(trainingSongs[i][j])
-			for k := 1; k < len(trainingSongs[i]); k++ {
+			for k := 1; k < len(trainingSongs[i])-1; k++ {
 				var nextChar = string(trainingSongs[i][k])
 				_, check_map_exsists := statisticsMap[currentChar]
 
@@ -120,7 +120,7 @@ func compose(currentChar string, length int, orderedStatisticsMap map[string]Pai
 	var song = currentChar
 	rand.Seed(time.Now().UnixNano())
 
-	for i := 0; i < length-1; i++ {
+	for i := 0; i < length; i++ {
 		var randomNr = 100.0 * rand.Float64()
 
 		for j := 0; j < len(currentMap); j++ {
