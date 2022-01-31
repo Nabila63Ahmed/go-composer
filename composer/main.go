@@ -120,7 +120,7 @@ func compose(currentChar string, length int, orderedStatisticsMap map[string]Pai
 	var song = currentChar
 	rand.Seed(time.Now().UnixNano())
 
-	for i := 0; i < length; i++ {
+	for i := 0; i < length-1; i++ {
 		var randomNr = 100.0 * rand.Float64()
 
 		for j := 0; j < len(currentMap); j++ {
