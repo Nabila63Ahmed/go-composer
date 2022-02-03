@@ -22,7 +22,7 @@ func (p PairList) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 func (p PairList) Less(i, j int) bool { return p[i].Value > p[j].Value }
 
 func main() {
-	path := "../data.csv"
+	path := "data.csv"
 	trainingSongs := loadData(path)
 	results := make(chan string)
 
