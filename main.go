@@ -53,6 +53,8 @@ func main() {
 	}
 }
 
+/*Load data from the csv file & arrange them in an array*/
+
 func loadData(path string) []string {
 	file, err := os.Open(path)
 	if err != nil {
@@ -71,6 +73,13 @@ func loadData(path string) []string {
 	}
 	return trainingSongs
 }
+
+/*
+From an array of songs:
+	* For every character in every song, count the occurrences of successor characters
+	* Sort successors' lists descendingly
+	* Change occurences to percentages
+*/
 
 func constructStats(trainingSongs []string) (map[string]PairList, map[string][]float64) {
 	statisticsMap := make(map[string]map[string]int)
@@ -132,10 +141,15 @@ func constructStats(trainingSongs []string) (map[string]PairList, map[string][]f
 	return orderedStatisticsMap, cumulativeArrayMap
 }
 
+/*Using the compose function as a go routine*/
+
 func composeRoutines(currentChar string, length int, orderedStatisticsMap map[string]PairList, cumulativeArrayMap map[string][]float64, results chan string) {
 	song := compose(currentChar, length, orderedStatisticsMap, cumulativeArrayMap)
 	results <- song
 }
+
+/*Composing a string, one character at a time from the statistics' map,
+according to the probability distribution of characters*/
 
 func compose(currentChar string, length int, orderedStatisticsMap map[string]PairList, cumulativeArrayMap map[string][]float64) string {
 	var currentMap = cumulativeArrayMap[currentChar]
